@@ -1,0 +1,41 @@
+type Message @model @auth(rules: [{allow: private}]) {
+  id: ID!
+  text: String
+  author: User @hasOne
+  conversationID: ID! @index(name: "byConversation")
+}
+
+type Conversation @model @auth(rules: [{allow: private}]) {
+  id: ID!
+  messages: [Message] @hasMany(indexName: "byConversation", fields: ["id"])
+  friend: Friend @hasOne
+  creator: User @hasOne
+  recipient: User @hasOne
+}
+
+type Friend @model @auth(rules: [{allow: private}]) {
+  id: ID!
+  sender: User @hasOne
+  receiver: User @hasOne
+}
+
+enum FriendRequestStatus {
+  ACCEPTED
+  PENDING
+  REJECTED
+}
+
+type FriendRequest @model @auth(rules: [{allow: private}]) {
+  id: ID!
+  sender: User @hasOne
+  status: FriendRequestStatus
+  receiver: User @hasOne
+}
+
+type User @model @auth(rules: [{allow: private}]) {
+  id: ID!
+  name: String
+  email: String
+  username: String
+}
+ 
